@@ -1,4 +1,4 @@
-package com.hq.app.mylibrary.activitys;
+package com.hq.app.mylibrary.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -27,7 +27,6 @@ public class BaseFragment extends Fragment {
 	}
 
 	protected View myView;
-	protected MyAnim myAnim;
 
 	private receiver rec;
 
@@ -39,8 +38,6 @@ public class BaseFragment extends Fragment {
 
 	//公用方法初始化
 	private void init() {
-		myAnim = new MyAnim();
-
 		rec = new receiver();
 		IntentFilter filter = new IntentFilter("NotifyAction");
 		activity.registerReceiver(rec, filter);

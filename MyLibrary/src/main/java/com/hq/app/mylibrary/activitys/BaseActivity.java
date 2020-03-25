@@ -14,8 +14,6 @@ import com.hq.app.mylibrary.views.MyAnim;
 
 public class BaseActivity extends AppCompatActivity {
 
-    protected MyAnim myAnim;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
 
     //初始化
     private void init() {
-        myAnim = new MyAnim();
+
     }
 
     //消息提示
