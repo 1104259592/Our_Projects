@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_green_900">#33691E</color>
+    <color name="purple_500">#9C27B0</color>
+    <color name="pink_500">#FF4081</color>
+    <color name="orange_500">#FF9800</color>
+    <color name="cyan_500">#00BCD4</color>
+    <color name="yellow_900">#F57F17</color>
+</resources>

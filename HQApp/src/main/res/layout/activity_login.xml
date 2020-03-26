@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:kevin="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:background="@mipmap/person"
+    tools:context="com.hq.app.activitys.LoginActivity">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        kevin:counterOverflowTextAppearance="@style/counterOverflowTextColor">
+
+        <EditText
+            android:id="@+id/et_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/user_name"
+            android:singleLine="true"
+            android:textColor="@color/light_green_900" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/button_corners"
+        kevin:errorTextAppearance="@style/counterOverflowTextColor"
+        kevin:passwordToggleContentDescription="@string/app_name"
+        kevin:passwordToggleDrawable="@mipmap/eye"
+        kevin:passwordToggleEnabled="true"
+        kevin:passwordToggleTint="?attr/colorPrimary"
+        kevin:passwordToggleTintMode="src_atop">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/text_input_et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/login_margin_top"
+        android:background="@drawable/bg_login"
+        android:text="@string/login"
+        android:textAllCaps="false"
+        android:textColor="?attr/colorText"
+        android:textSize="@dimen/login_text_size" />
+
+</LinearLayout>

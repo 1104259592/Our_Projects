@@ -47,6 +47,18 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * 结束活动页动画
      */
+    protected void baseFinish() {
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                baseFinish(getWindow().getDecorView());
+            }
+        });
+    }
+
+    /**
+     * 结束活动页动画
+     */
     protected void baseFinish(View view) {
         CircularAnim.fullActivity(this, view)
                 .colorOrImageRes(R.mipmap.person)
@@ -56,6 +68,19 @@ public class BaseActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+    }
+
+    /**
+     * 跳转活动页动画
+     */
+    protected void baseStartIntent(final Intent intent) {
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                baseStartIntent(getWindow().getDecorView(), intent);
+            }
+        });
+
     }
 
     /**

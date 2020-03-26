@@ -1,5 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_item_01"
             android:background="?attr/colorTextBackground"
@@ -24,5 +26,23 @@
             android:icon="@mipmap/ic_launcher"
             android:textColor="?attr/colorText"
             android:title="主题设置" />
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_item2_01"
+            android:background="?attr/colorTextBackground"
+            android:icon="@mipmap/ic_launcher"
+            android:textColor="?attr/colorText"
+            android:title="版本信息" />
+
+        <item
+            android:id="@+id/nav_item2_02"
+            android:background="?attr/colorTextBackground"
+            android:icon="@android:drawable/btn_star_big_off"
+            android:textColor="?attr/colorText"
+            android:title="关于我们" />
     </group>
 </menu>
