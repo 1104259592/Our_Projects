@@ -1,10 +1,13 @@
 package com.hq.app.mylibrary.baseconfigure;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
 
 import com.cwy.retrofitdownloadlib.http.HttpMethods;
 import com.hq.app.mylibrary.R;
+import com.hq.app.mylibrary.utils.PermissionUtil;
 import com.hq.app.mylibrary.utils.RetrofitRequestUtils.RetrofitUtil;
 import com.scwang.smartrefresh.header.BezierCircleHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -44,5 +47,36 @@ public class App extends Application {
         CrashHandler.getInstance().register(getApplicationContext());
         RetrofitUtil.getInstance(getApplicationContext());
         HttpMethods.getInstance().init();
+
+        this.registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                PermissionUtil.getPermissionsBl(activity);
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+            }
+        });
     }
 }

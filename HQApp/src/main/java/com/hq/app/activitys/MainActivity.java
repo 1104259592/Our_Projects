@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 
 import com.hq.app.R;
 import com.hq.app.mylibrary.activitys.BaseActivity;
+import com.hq.app.mylibrary.utils.DialogUtil;
+import com.hq.app.mylibrary.utils.PermissionUtil;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -109,10 +111,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 showMessage("666");
                 break;
             case R.id.tab_item_01:
-                showMessage("首页");
+                showMessage("测试权限状态");
+                DialogUtil.notifyDialog(this, "读取权限=" + PermissionUtil.BL_READ_EXTERNAL_STORAGE
+                        + "\n写入权限=" + PermissionUtil.BL_WRITE_EXTERNAL_STORAGE
+                        + "\n开启相机权限=" + PermissionUtil.BL_CAMERA);
                 break;
             case R.id.tab_item_02:
-                showMessage("消息");
+                showMessage("跳转到应用权限系统设置页面");
+                PermissionUtil.gotoPermissionSettings(this);
                 break;
         }
         //关闭弹出菜单
