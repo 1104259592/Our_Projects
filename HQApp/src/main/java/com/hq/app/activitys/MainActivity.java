@@ -1,5 +1,6 @@
 package com.hq.app.activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,14 +11,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
-import com.hq.app.mobile.R;
+import com.hq.app.R;
 import com.hq.app.mylibrary.activitys.BaseActivity;
+import com.hq.app.mylibrary.utils.DialogUtil;
+import com.hq.app.mylibrary.utils.PermissionUtil;
 
-public class MainActivity extends BaseActivity {
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar mToolbar;
     private FloatingActionButton mFab;
@@ -31,7 +38,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         initView();
         init();
-        initAnim();
     }
 
     private void initView() {
@@ -50,7 +56,6 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,7 +63,8 @@ public class MainActivity extends BaseActivity {
                         .setAction("登录", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Snackbar.make(mDrawerLayout, "暂无此功能！", Snackbar.LENGTH_LONG).show();
+                                Intent intent = LoginActivity.startLoginActivity(MainActivity.this);
+                                baseStartIntent(v, intent);
                             }
                         }).show();
             }
@@ -67,44 +73,57 @@ public class MainActivity extends BaseActivity {
         //设置默认选中的菜单
         mNavActivityMain.setCheckedItem(R.id.nav_item_01);
         //给菜单设置监听
-        mNavActivityMain.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNavActivityMain.setNavigationItemSelectedListener(this);
+
+        View mNavHead = mNavActivityMain.getHeaderView(0);
+        CircleImageView mNavHeadPersonPic = (CircleImageView) mNavHead.findViewById(R.id.nav_head_person_pic);
+        mNavHeadPersonPic.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_item_01:
-                        showMessage("111");
-                        break;
-                    case R.id.nav_item_02:
-                        showMessage("222");
-                        break;
-                    case R.id.nav_item_03:
-                        showMessage("333");
-                        break;
-                    case R.id.nav_item_04://主题设置
-                        Intent intent = ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle());
-                        baseStartIntentForResult(mNavActivityMain, intent, REQUESTCODE);
-                        break;
-                }
-                //关闭弹出菜单
-                mDrawerLayout.closeDrawers();
-                return true;
+            public void onClick(View v) {
+                Intent intent = LoginActivity.startLoginActivity(MainActivity.this);
+                baseStartIntent(v, intent);
             }
         });
 
-        mBottomAppBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.tab_item_01:
-                        showMessage("首页");
-                        break;
-                    case R.id.tab_item_02:
-                        showMessage("消息");
-                        break;
-                }
-                return true;
-            }
-        });
+        mBottomAppBar.setOnNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_item_01:
+                showMessage("111");
+                break;
+            case R.id.nav_item_02:
+                showMessage("222");
+                break;
+            case R.id.nav_item_03:
+                showMessage("333");
+                break;
+            case R.id.nav_item_04://主题设置
+                Intent intent = ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle());
+                baseStartIntentForResult(mNavActivityMain, intent, REQUESTCODE);
+                break;
+            case R.id.nav_item2_01:
+                showMessage("555");
+                break;
+            case R.id.nav_item2_02:
+                showMessage("666");
+                break;
+            case R.id.tab_item_01:
+                showMessage("测试权限状态");
+                DialogUtil.notifyDialog(this, "读取权限=" + PermissionUtil.BL_READ_EXTERNAL_STORAGE
+                        + "\n写入权限=" + PermissionUtil.BL_WRITE_EXTERNAL_STORAGE
+                        + "\n开启相机权限=" + PermissionUtil.BL_CAMERA);
+                break;
+            case R.id.tab_item_02:
+                showMessage("跳转到应用权限系统设置页面");
+                PermissionUtil.gotoPermissionSettings(this);
+                break;
+        }
+        //关闭弹出菜单
+        mDrawerLayout.closeDrawers();
+        return true;
     }
 
     //配置导航栏功能按钮
@@ -127,5 +146,11 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //启动页面
+    public static Intent startMainActivity(Context c) {
+        Intent intent = new Intent(c, MainActivity.class);
+        return intent;
     }
 }

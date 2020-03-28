@@ -2,7 +2,7 @@ package com.hq.app.model.impl;
 
 import android.content.Context;
 
-import com.hq.app.mobile.R;
+import com.hq.app.R;
 import com.hq.app.model.ThemeSettingModel;
 import com.hq.app.model.entities.ThemeEntity;
 import com.hq.app.presenter.OnThemeSelectListener;

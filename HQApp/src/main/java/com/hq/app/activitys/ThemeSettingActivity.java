@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.hq.app.mobile.R;
+import com.hq.app.R;
 import com.hq.app.adapters.ThemeSettingAdapter;
 import com.hq.app.model.entities.ThemeEntity;
 import com.hq.app.presenter.ThemeSettingPresenter;

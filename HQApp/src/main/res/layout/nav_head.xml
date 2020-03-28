@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="180dp"
@@ -7,6 +6,7 @@
     android:padding="10dp">
     <!-- CircleImageView 开源框架 将图片裁剪为圆形-->
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/nav_head_person_pic"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_centerInParent="true"

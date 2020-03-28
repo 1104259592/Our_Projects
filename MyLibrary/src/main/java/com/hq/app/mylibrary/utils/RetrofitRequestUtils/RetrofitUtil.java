@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.cwy.retrofitdownloadlib.http.DownloadHelper;
@@ -12,9 +14,11 @@ import com.cwy.retrofitdownloadlib.http.FileDownloadCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -92,73 +96,40 @@ public class RetrofitUtil {
                 .build();
     }
 
-    //请求
-    public static void request(String url, final int key, final HttpRetrofitCallback callback, final Activity a) {
-        if (a.isDestroyed()) {
-            return;
-        }
-        if (requesting) {
-            if (!a.isDestroyed() && callback != null) {
-                callback.onNotify("正在请求，请稍后...");
-            }
-            return;
-        }
-        requesting = true;
-        RetrofitInterface retrofitInterface = mRetrofit.create(RetrofitInterface.class);
-        retrofitInterface.getHttpRetrofit(url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.v(TAG, "onSubscribe " + d);
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody data) {
-                        try {
-                            String result = data.string();
-                            Log.v(TAG, "onNext " + result);
-                            if (!a.isDestroyed() && callback != null) {
-                                Message message = new Message();
-                                message.what = key;
-                                message.obj = result;
-                                callback.onSuccess(message);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        requesting = false;
-                        String msg = e.toString();
-                        Log.v(TAG, "onError " + msg);
-                        if (!a.isDestroyed() && callback != null) {
-                            if (msg.contains("java.net.SocketTimeoutException")) {
-                                callback.onError("请求超时");
-                            } else if (msg.contains("org.apache.http.conn.HttpHostConnectException")) {
-                                callback.onError("网络异常");
-                            } else if (msg.contains("Internal Server Error")) {
-                                callback.onError("网络异常，请重新操作");
-                            } else if (msg.contains("Not Found")) {
-                                callback.onError("服务器未启动");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.v(TAG, "onComplete");
-                        requesting = false;
-                    }
-                });
-
+    //GET请求
+    public static void requestGet(String url, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        Map<String, String> map = new HashMap<>();
+        requestGet(url, null, map, key, callback, a);
     }
 
-    //map参数方式请求
-    public static void request(String url, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a) {
+    //带map参数GET请求
+    public static void requestGet(String url, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        requestGet(url, null, map, key, callback, a);
+    }
+
+    //带请求头token和map参数GET请求
+    public static void requestGet(String url, String token, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        request(url, token, map, key, callback, a, "GET");
+    }
+
+    //POST请求
+    public static void requestPost(String url, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        Map<String, String> map = new HashMap<>();
+        requestPost(url, null, map, key, callback, a);
+    }
+
+    //带map参数POST请求
+    public static void requestPost(String url, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        requestPost(url, null, map, key, callback, a);
+    }
+
+    //带请求头token和map参数POST请求
+    public static void requestPost(String url, String token, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        request(url, token, map, key, callback, a, "POST");
+    }
+
+    //统一限制条件
+    private static void request(String url, String token, Map<String, String> map, final int key, final HttpRetrofitCallback callback, final Activity a, String type) {
         if (a.isDestroyed()) {
             return;
         }
@@ -170,8 +141,30 @@ public class RetrofitUtil {
         }
         requesting = true;
         RetrofitInterface retrofitInterface = mRetrofit.create(RetrofitInterface.class);
-        retrofitInterface.getHttpRetrofit(url, map)
-                .subscribeOn(Schedulers.io())
+        Observable<ResponseBody> observable;
+        if (!TextUtils.isEmpty(token)) {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("token", token);
+            if ("POST".equals(type)) {
+                observable = retrofitInterface.postHttpRetrofit(url, headers, map);
+            } else {
+                observable = retrofitInterface.getHttpRetrofit(url, headers, map);
+            }
+        } else {
+            if ("POST".equals(type)) {
+                observable = retrofitInterface.postHttpRetrofit(url, map);
+            } else {
+                observable = retrofitInterface.getHttpRetrofit(url, map);
+            }
+        }
+        if (observable != null) {
+            requestResult(observable, key, callback, a);
+        }
+    }
+
+    //统一处理返回值
+    private static void requestResult(Observable<ResponseBody> observable, final int key, final HttpRetrofitCallback callback, final Activity a) {
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -219,7 +212,6 @@ public class RetrofitUtil {
                         requesting = false;
                     }
                 });
-
     }
 
     //文件下载

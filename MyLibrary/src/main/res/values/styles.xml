@@ -19,7 +19,7 @@
         <item name="colorPrimary">@color/titleColor</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorText">@color/md_red_400</item>
+        <item name="colorText">@color/white</item>
         <item name="colorTextBackground">@android:color/transparent</item>
     </style>
 
@@ -31,4 +31,8 @@
         <item name="colorText">@color/white</item>
         <item name="colorTextBackground">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
