@@ -21,6 +21,8 @@ import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 
 public class App extends Application {
 
+    private static Context context;
+
     //static 代码段可以防止内存泄露
     static {
         //设置全局的Header构建器
@@ -44,6 +46,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
         CrashHandler.getInstance().register(getApplicationContext());
         RetrofitUtil.getInstance(getApplicationContext());
         HttpMethods.getInstance().init();
@@ -78,5 +81,13 @@ public class App extends Application {
             public void onActivityDestroyed(Activity activity) {
             }
         });
+    }
+
+    /**
+     * 获取全局context
+     * @return
+     */
+    public static Context getContext() {
+        return context;
     }
 }

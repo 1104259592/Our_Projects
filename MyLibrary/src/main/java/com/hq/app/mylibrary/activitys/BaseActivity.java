@@ -1,9 +1,11 @@
 package com.hq.app.mylibrary.activitys;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.hq.app.mylibrary.R;
@@ -19,7 +21,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //设置主题
         setTheme(ThemeUtil.getTheme(this));
-
+        //知晓当前是在哪一个活动
+        Log.d("BaseActivity",getClass().getSimpleName());
+        ActivityConllector.addActivity(this);
         init();
     }
 
@@ -27,6 +31,12 @@ public class BaseActivity extends AppCompatActivity {
     //初始化
     private void init() {
 
+    }
+    //一键退出
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityConllector.removeActivity(this);
     }
 
     //消息提示
