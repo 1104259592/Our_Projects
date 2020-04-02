@@ -40,6 +40,10 @@ dependencies {
     api 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0'
     //没有使用特殊Header，可以不加这行
     api 'com.hjq:xxpermissions:6.0'
+    //Android视图的字段和方法绑定快速注解框架
+    api 'com.jakewharton:butterknife:8.8.1'
+//    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //权限申请
     compile files('libs/BaiduLBS_Android.jar')
+
 }

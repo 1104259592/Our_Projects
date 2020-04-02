@@ -14,6 +14,8 @@ import com.hq.app.mylibrary.utils.ToastUtil;
 import com.hq.app.mylibrary.views.CircularAnim;
 import com.hq.app.mylibrary.views.MyAnim;
 
+import butterknife.ButterKnife;
+
 public class BaseActivity extends AppCompatActivity {
 
     @Override
@@ -30,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
 
     //初始化
     private void init() {
-
+        ButterKnife.bind(this);
     }
     //一键退出
     @Override

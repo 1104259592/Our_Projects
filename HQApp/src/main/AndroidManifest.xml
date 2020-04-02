@@ -29,6 +29,9 @@
         <activity
             android:name=".activitys.ThemeSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activitys.MapActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

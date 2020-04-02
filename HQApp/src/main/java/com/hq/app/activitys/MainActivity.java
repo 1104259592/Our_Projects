@@ -104,6 +104,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 Intent intent = ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle());
                 baseStartIntentForResult(mNavActivityMain, intent, REQUESTCODE);
                 break;
+            case R.id.nav_item_positon://主题设置
+                intent = MapActivity.startMapActivity(MainActivity.this);
+                baseStartIntent(intent);
+                break;
             case R.id.nav_item2_01:
                 showMessage("555");
                 break;
