@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
@@ -34,8 +35,8 @@ import butterknife.ButterKnife;
  */
 public class MapActivity extends BaseActivity {
     public LocationClient mLocationClient;
-    @BindView(R.id.position_text_view)
-    private TextView positionText;
+//    @BindView(R.id.position_text_view)
+    TextView positionText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MapActivity extends BaseActivity {
         mLocationClient = new LocationClient(getApplicationContext());//创建LocationClient实例，获取一个全局的Context参数传入
         mLocationClient.registerLocationListener(new MyLocationListener());//注册一个定位监听器，当获取到位置信息的时候，会回调这个定位监听器
         setContentView(R.layout.activity_baidumap);
+         positionText = findViewById(R.id.position_text_view);
         //运行时权限，在运行时一次性申请3个权限
         List<Object> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(this,

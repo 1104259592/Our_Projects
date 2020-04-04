@@ -32,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
 
     //初始化
     private void init() {
-        ButterKnife.bind(this);
+//        ButterKnife.bind(this);
     }
     //一键退出
     @Override
