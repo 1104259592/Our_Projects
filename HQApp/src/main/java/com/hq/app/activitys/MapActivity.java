@@ -75,6 +75,7 @@ public class MapActivity extends BaseActivity {
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
         option.setScanSpan(5000);
+        option.setIsNeedAddress(true);
         mLocationClient.setLocOption(option);
     }
 
@@ -88,6 +89,16 @@ public class MapActivity extends BaseActivity {
                     append("\n");
             currentPostion.append("经度: ").append(location.getLongitude()).//获取经度
                     append("\n");
+            currentPostion.append("国家: ").append(location.getCountry())
+                    .append("\n");
+            currentPostion.append("省: ").append(location.getProvince())
+                    .append("\n");
+            currentPostion.append("市: ").append(location.getCity())
+                    .append("\n");
+            currentPostion.append("区: ").append(location.getDistrict())
+                    .append("\n");
+            currentPostion.append("街道: ").append(location.getStreet())
+                    .append("\n");
             currentPostion.append("定位方式:");//获取定位方式
             if (location.getLocType() == BDLocation.TypeGpsLocation) {
                 currentPostion.append("GPS");
