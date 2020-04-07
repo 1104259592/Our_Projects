@@ -16,7 +16,9 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapView;
 import com.hq.app.R;
 import com.hq.app.mylibrary.activitys.BaseActivity;
 
@@ -37,13 +39,15 @@ public class MapActivity extends BaseActivity {
     public LocationClient mLocationClient;
 //    @BindView(R.id.position_text_view)
     TextView positionText;
-
+    private MapView mapView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLocationClient = new LocationClient(getApplicationContext());//创建LocationClient实例，获取一个全局的Context参数传入
         mLocationClient.registerLocationListener(new MyLocationListener());//注册一个定位监听器，当获取到位置信息的时候，会回调这个定位监听器
+        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_baidumap);
+        mapView = findViewById(R.id.bmapView);
          positionText = findViewById(R.id.position_text_view);
         //运行时权限，在运行时一次性申请3个权限
         List<Object> permissionList = new ArrayList<>();
@@ -110,9 +114,22 @@ public class MapActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mLocationClient.stop();
+        mapView.onDestroy();
     }
 
     //启动主题设置页
