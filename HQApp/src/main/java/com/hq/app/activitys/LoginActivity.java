@@ -75,7 +75,7 @@ public class LoginActivity extends BaseActivity implements TextWatcher, View.OnC
                     mTextInputEtPassword.setError(getString(R.string.password_error));
                 } else if (!TextUtils.isEmpty(passwordText)) {
                     Intent intent = MainActivity.startMainActivity(this);
-                    baseStartIntent(v, intent);
+                    baseStartIntent(intent);
                 }
                 break;
         }

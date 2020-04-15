@@ -52,7 +52,7 @@ public class InternetSettingActivity extends BaseActivity {
         internet_setting_toolbar.setNavigationOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                baseFinish(v);
+                baseFinish();
             }
         });
 
@@ -65,8 +65,6 @@ public class InternetSettingActivity extends BaseActivity {
         String port = preferences.getString(RetrofitUtil.KEY_PORT, RetrofitUtil.SERVICEPORT);
         setting_ip.setText(ip);
         setting_port.setText(port);
-
-        initAnim();
     }
 
     @Override

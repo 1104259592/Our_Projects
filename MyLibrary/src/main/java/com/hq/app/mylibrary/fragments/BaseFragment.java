@@ -51,9 +51,57 @@ public class BaseFragment extends Fragment {
 	/**
 	 * 跳转活动页动画
 	 */
-	protected void baseStartIntent(View view, final Intent intent) {
+	protected void baseStartIntent(Intent intent) {
+		startActivity(intent);
+		activity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+	}
+
+	/**
+	 * 跳转活动页动画-带回调参数
+	 */
+	protected void basestartActivityForResult(Intent intent, OnActivityResultCallBack resultCallBack) {
+		this.resultCallBack = resultCallBack;
+		startActivityForResult(intent, REQUESTCODE);
+		activity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+	}
+
+	protected static final int REQUESTCODE = 0;//intent请求码
+	protected static final int RESULTCODE = 1;//intent回调码
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUESTCODE && resultCode == RESULTCODE && data != null) {
+			if (resultCallBack != null) {
+				resultCallBack.onActivityResult(data);
+			}
+		}
+	}
+
+	private OnActivityResultCallBack resultCallBack;
+
+	public interface OnActivityResultCallBack{
+		void onActivityResult(@Nullable Intent data);
+	}
+
+	/**
+	 * 跳转活动页动画
+	 */
+	protected void baseStartIntent(final Intent intent, final int colorOrImageRes) {
+		activity.getWindow().getDecorView().post(new Runnable() {
+			@Override
+			public void run() {
+				baseStartIntent(activity.getWindow().getDecorView(), intent, colorOrImageRes);
+			}
+		});
+	}
+
+	/**
+	 * 跳转活动页动画
+	 */
+	protected void baseStartIntent(View view, final Intent intent, int colorOrImageRes) {
 		CircularAnim.fullActivity(activity, view)
-				.colorOrImageRes(R.mipmap.person)
+				.colorOrImageRes(colorOrImageRes)
 				.go(new CircularAnim.OnAnimationEndListener() {
 					@Override
 					public void onAnimationEnd() {

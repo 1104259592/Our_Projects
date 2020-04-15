@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             @Override
                             public void onClick(View v) {
                                 Intent intent = LoginActivity.startLoginActivity(MainActivity.this);
-                                baseStartIntent(v, intent);
+                                baseStartIntent(intent);
                             }
                         }).show();
             }
@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 Intent intent = LoginActivity.startLoginActivity(MainActivity.this);
-                baseStartIntent(v, intent);
+                baseStartIntent(intent);
             }
         });
 
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.nav_item_04://主题设置
                 Intent intent = ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle());
-                baseStartIntentForResult(mNavActivityMain, intent, REQUESTCODE);
+                baseStartIntentForResult(intent, REQUESTCODE);
                 break;
             case R.id.nav_item_positon://主题设置
                 intent = MapActivity.startMapActivity(MainActivity.this);

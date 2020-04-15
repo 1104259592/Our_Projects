@@ -55,7 +55,7 @@ public class ThemeSettingActivity extends BaseActivity implements ThemeSettingVi
                 Intent intent = new Intent();
                 intent.putExtra("change", themeStyle == getThemeStyle() ? false : true);
                 setResult(RESULTCODE, intent);
-                baseFinish(v);
+                baseFinish();
             }
         });
 
@@ -94,7 +94,7 @@ public class ThemeSettingActivity extends BaseActivity implements ThemeSettingVi
         Intent intent = new Intent();
         intent.putExtra("change", themeStyle == getThemeStyle() ? false : true);
         setResult(RESULTCODE, intent);
-        baseFinish(mThemeSettingRv);
+        baseFinish();
     }
 
     //启动主题设置页

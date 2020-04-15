@@ -24,7 +24,7 @@ public class BaseActivity extends AppCompatActivity {
         //设置主题
         setTheme(ThemeUtil.getTheme(this));
         //知晓当前是在哪一个活动
-        Log.d("BaseActivity",getClass().getSimpleName());
+        Log.d("BaseActivity", getClass().getSimpleName());
         ActivityConllector.addActivity(this);
         init();
     }
@@ -34,6 +34,7 @@ public class BaseActivity extends AppCompatActivity {
     private void init() {
 //        ButterKnife.bind(this);
     }
+
     //一键退出
     @Override
     protected void onDestroy() {
@@ -60,67 +61,24 @@ public class BaseActivity extends AppCompatActivity {
      * 结束活动页动画
      */
     protected void baseFinish() {
-        getWindow().getDecorView().post(new Runnable() {
-            @Override
-            public void run() {
-                baseFinish(getWindow().getDecorView());
-            }
-        });
-    }
-
-    /**
-     * 结束活动页动画
-     */
-    protected void baseFinish(View view) {
-        CircularAnim.fullActivity(this, view)
-                .colorOrImageRes(R.mipmap.person)
-                .go(new CircularAnim.OnAnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        finish();
-                    }
-                });
+        finish();
+        overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 
     /**
      * 跳转活动页动画
      */
-    protected void baseStartIntent(final Intent intent) {
-        getWindow().getDecorView().post(new Runnable() {
-            @Override
-            public void run() {
-                baseStartIntent(getWindow().getDecorView(), intent);
-            }
-        });
-
-    }
-
-    /**
-     * 跳转活动页动画
-     */
-    protected void baseStartIntent(View view, final Intent intent) {
-        CircularAnim.fullActivity(this, view)
-                .colorOrImageRes(R.mipmap.person)
-                .go(new CircularAnim.OnAnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        startActivity(intent);
-                    }
-                });
+    protected void baseStartIntent(Intent intent) {
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     /**
      * 带回调的跳转活动页动画
      */
-    protected void baseStartIntentForResult(View view, final Intent intent, final int requestCode) {
-        CircularAnim.fullActivity(this, view)
-                .colorOrImageRes(R.mipmap.person)
-                .go(new CircularAnim.OnAnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        startActivityForResult(intent, requestCode);
-                    }
-                });
+    protected void baseStartIntentForResult(Intent intent, final int requestCode) {
+        startActivityForResult(intent, requestCode);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     protected static final int REQUESTCODE = 0;//intent请求码
@@ -137,6 +95,33 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 跳转活动页动画
+     */
+    protected void baseStartIntent(final Intent intent, final int colorOrImageRes) {
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                baseStartIntent(getWindow().getDecorView(), intent, colorOrImageRes);
+            }
+        });
+
+    }
+
+    /**
+     * 跳转活动页动画
+     */
+    protected void baseStartIntent(View view, final Intent intent, int colorOrImageRes) {
+        CircularAnim.fullActivity(this, view)
+                .colorOrImageRes(colorOrImageRes)
+                .go(new CircularAnim.OnAnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        startActivity(intent);
+                    }
+                });
+    }
+
     //初始动画
     protected void initAnim() {
         getWindow().getDecorView().post(new Runnable() {
@@ -145,5 +130,10 @@ public class BaseActivity extends AppCompatActivity {
                 CircularAnim.show(getWindow().getDecorView()).go();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        baseFinish();
     }
 }
