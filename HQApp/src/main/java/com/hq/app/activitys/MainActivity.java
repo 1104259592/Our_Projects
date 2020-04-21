@@ -10,6 +10,8 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,9 +20,15 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.hq.app.R;
+import com.hq.app.adapters.EventAdapter;
+import com.hq.app.model.entities.EventEntity;
 import com.hq.app.mylibrary.activitys.BaseActivity;
 import com.hq.app.mylibrary.utils.DialogUtil;
 import com.hq.app.mylibrary.utils.PermissionUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -31,14 +39,40 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private NavigationView mNavActivityMain;
     private DrawerLayout mDrawerLayout;
     private BottomNavigationView mBottomAppBar;
+    private RecyclerView mRecyclerView;
+
+    private EventEntity[] eventEntities = {
+            new EventEntity("2手苹果","https://images.unsplash.com/photo-1558981001-1995369a39cd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
+            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587467440782-154ba8654ac0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
+            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587443836182-345f84c18961?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
+            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587461244603-2f5b56351de2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
+            new EventEntity("2手苹果","https://unsplash.com/photos/HjR4bD5Kq7I","降价大甩卖"),
+            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587432816476-d8df44f42bb8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
+    };
+
+    private List<EventEntity> entityList = new ArrayList<>();
+
+    private EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initEvents();
         initView();
         init();
     }
+
+    private void initEvents() {
+        entityList.clear();
+        for (int i = 0; i < 50; i++) {
+            Random random = new Random();
+            int index = random.nextInt(eventEntities.length);
+            entityList.add(eventEntities[index]);
+
+        }
+    }
+
 
     private void initView() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,6 +80,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mNavActivityMain = (NavigationView) findViewById(R.id.nav_activity_main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mBottomAppBar = (BottomNavigationView) findViewById(R.id.bottom_app_bar);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rlv_main_display);
     }
 
     private void init() {
@@ -86,6 +121,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
 
         mBottomAppBar.setOnNavigationItemSelectedListener(this);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
+        mRecyclerView.setLayoutManager(layoutManager);
+        eventAdapter = new EventAdapter(entityList);
+        mRecyclerView.setAdapter(eventAdapter);
     }
 
     @Override
@@ -149,7 +189,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);//什么意思？
     }
 
     //启动页面
