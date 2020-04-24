@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hq.app.R;
 import com.hq.app.adapters.EventAdapter;
 import com.hq.app.model.entities.EventEntity;
@@ -65,12 +66,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initEvents() {
-        entityList.clear();
         for (int i = 0; i < 50; i++) {
             Random random = new Random();
             int index = random.nextInt(eventEntities.length);
-            entityList.add(eventEntities[index]);
-
+            entityList.add(0,eventEntities[index]);
         }
     }
 
@@ -128,7 +127,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mRecyclerView.setLayoutManager(layoutManager);
         eventAdapter = new EventAdapter(entityList);
         mRecyclerView.setAdapter(eventAdapter);
-
+        eventAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(view.getContext(), EventDetailActivity.class);
+                intent.putExtra(EventDetailActivity.EVENT_NAME,entityList.get(position).getTitle());
+                intent.putExtra(EventDetailActivity.EVENT_IMAGE_ID,entityList.get(position).getPic());
+                startActivity(intent);
+            }
+        });
 
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

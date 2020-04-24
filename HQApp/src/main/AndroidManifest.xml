@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activitys.EventDetailActivity"></activity>
+        <activity android:name=".activitys.EventDetailActivity"
+            android:theme="@style/EventDetailActivityTheme"></activity>
         <activity
             android:name=".activitys.LogoActivity"
             android:noHistory="true"
@@ -23,7 +24,7 @@
         </activity>
         <activity
             android:name=".activitys.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/EventDetailActivityTheme" />
         <activity
             android:name=".activitys.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />

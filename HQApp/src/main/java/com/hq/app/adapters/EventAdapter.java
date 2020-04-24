@@ -3,6 +3,7 @@ package com.hq.app.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,9 +14,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.hq.app.R;
 import com.hq.app.activitys.EventDetailActivity;
 import com.hq.app.model.entities.EventEntity;
+import com.hq.app.mylibrary.baseconfigure.App;
 
 import java.util.List;
 
@@ -25,61 +29,19 @@ import java.util.List;
  * @author: zhangqi
  * @Date: 2020/4/21
  */
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-    private Context mContext;
+public class EventAdapter extends BaseQuickAdapter<EventEntity, BaseViewHolder> {
 
-    private List<EventEntity> mEventEntityList;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        CardView cardView;
-        ImageView eventImageView;
-        TextView eventName;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            cardView = (CardView) itemView;
-            eventImageView = itemView.findViewById(R.id.event_item_image);
-            eventName = itemView.findViewById(R.id.event_item_name);
-        }
-    }
-
-    public EventAdapter(List<EventEntity> mEventEntityList) {
-        this.mEventEntityList = mEventEntityList;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        if (mContext == null){
-            mContext = viewGroup.getContext();
-        }
-        View v = LayoutInflater.from(mContext).inflate(R.layout.event_itemlayout, viewGroup, false);
-        final ViewHolder viewHolder = new ViewHolder(v);
-        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterPosition = viewHolder.getAdapterPosition();
-                EventEntity eventEntity = mEventEntityList.get(adapterPosition);
-                Intent intent = new Intent(mContext, EventDetailActivity.class);
-                intent.putExtra(EventDetailActivity.EVENT_NAME,eventEntity.getTitle());
-                intent.putExtra(EventDetailActivity.EVENT_IMAGE_ID,eventEntity.getPic());
-                mContext.startActivity(intent);
-            }
-        });
-        return viewHolder;
+    public EventAdapter(@Nullable List<EventEntity> data) {
+        super(R.layout.event_itemlayout, data);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        EventEntity eventEntity = mEventEntityList.get(i);
-        viewHolder.eventName.setText(eventEntity.getTitle());
-        Glide.with(mContext).load(eventEntity.getPic())
-        .into(viewHolder.eventImageView);
-
+    protected void convert(BaseViewHolder helper, EventEntity item) {
+        helper.setText(R.id.event_item_name,item.getTitle());
+        Glide.with(App.getContext()).load(item.getPic())
+        .into((ImageView) helper.getView(R.id.event_item_image));
     }
 
-    @Override
-    public int getItemCount() {
-        return mEventEntityList.size();
-    }
 
 }
