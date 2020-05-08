@@ -3,7 +3,7 @@ package com.hq.app.adapters;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hq.app.R;
-import com.hq.app.model.entities.ThemeEntity;
+import com.hq.app.entities.ThemeEntity;
 
 import java.util.List;
 

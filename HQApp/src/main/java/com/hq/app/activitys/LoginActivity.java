@@ -19,7 +19,7 @@ import com.hq.app.mylibrary.activitys.BaseActivity;
 /**
  * 引导页
  */
-public class LoginActivity extends BaseActivity implements TextWatcher, View.OnClickListener {
+public class LoginActivity extends BaseLocalActivity implements TextWatcher, View.OnClickListener {
 
     private TextInputLayout mTextInputUserName, mTextInputPassword;
     private EditText mEtUserName;
@@ -74,8 +74,7 @@ public class LoginActivity extends BaseActivity implements TextWatcher, View.OnC
                     mTextInputPassword.setError(getString(R.string.password_error));
                     mTextInputEtPassword.setError(getString(R.string.password_error));
                 } else if (!TextUtils.isEmpty(passwordText)) {
-                    Intent intent = MainActivity.startMainActivity(this);
-                    baseStartIntent(intent);
+                    baseFinish();
                 }
                 break;
         }

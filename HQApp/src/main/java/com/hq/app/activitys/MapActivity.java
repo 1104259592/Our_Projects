@@ -39,13 +39,14 @@ import butterknife.ButterKnife;
  * @author: zhangqi
  * @Date: 2020/3/31
  */
-public class MapActivity extends BaseActivity {
+public class MapActivity extends BaseLocalActivity {
     public LocationClient mLocationClient;
-//    @BindView(R.id.position_text_view)
+    //    @BindView(R.id.position_text_view)
     TextView positionText;
     private MapView mapView;
     private BaiduMap baiduMap;
     private boolean isFirstLocate = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,26 +61,27 @@ public class MapActivity extends BaseActivity {
         //运行时权限，在运行时一次性申请3个权限
         List<Object> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         if (ContextCompat.checkSelfPermission(MapActivity.this,
-                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
+                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.READ_PHONE_STATE);
         }
         if (ContextCompat.checkSelfPermission(MapActivity.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-        if (!permissionList.isEmpty()){
+        if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(this,permissions,1);
+            ActivityCompat.requestPermissions(this, permissions, 1);
         } else {
             requestLocation();
         }
     }
+
     //开始定位功能
-    private void requestLocation(){
+    private void requestLocation() {
         initLocation();
         mLocationClient.start();
     }
@@ -90,15 +92,16 @@ public class MapActivity extends BaseActivity {
         option.setIsNeedAddress(true);
         mLocationClient.setLocOption(option);
     }
-    private void navigateTo(BDLocation location){
-        if (isFirstLocate){
-            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());//取出位置信息
+
+    private void navigateTo(BDLocation location) {
+        if (isFirstLocate) {
+            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());//取出位置信息
             MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
             baiduMap.animateMapStatus(update);
             update = MapStatusUpdateFactory.zoomTo(16f);//设置比例
             baiduMap.animateMapStatus(update);
             isFirstLocate = false;//防止多次调用animateMapStatus，
-                                    // 移动到我们当前位置只需在程序第一次定位的时候调用一次
+            // 移动到我们当前位置只需在程序第一次定位的时候调用一次
         }
         MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
         locationBuilder.latitude(location.getLatitude());
@@ -106,13 +109,14 @@ public class MapActivity extends BaseActivity {
         MyLocationData locationData = locationBuilder.build();
         baiduMap.setMyLocationData(locationData);
     }
+
     //回调的注册的监听器
-    public class MyLocationListener implements BDLocationListener{
+    public class MyLocationListener implements BDLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
-            if (location.getLocType() == BDLocation.TypeGpsLocation||
-             location.getLocType() == BDLocation.TypeNetWorkLocation){
+            if (location.getLocType() == BDLocation.TypeGpsLocation ||
+                    location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 navigateTo(location);
             }
 //            StringBuilder currentPostion = new StringBuilder();

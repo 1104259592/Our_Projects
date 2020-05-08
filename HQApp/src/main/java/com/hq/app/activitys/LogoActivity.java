@@ -13,7 +13,7 @@ import java.util.TimerTask;
 /**
  * 引导页
  */
-public class LogoActivity extends BaseActivity {
+public class LogoActivity extends BaseLocalActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.cwy.retrofitdownloadlib.http.DownloadHelper;
 import com.cwy.retrofitdownloadlib.http.FileDownloadCallback;
+import com.hq.app.mylibrary.utils.LoadingAnimUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,10 @@ public class RetrofitUtil {
     public static final String SERVICEIP = "172.16.0.241";//服务器默认IP地址
     public static final String SERVICEPORT = "8080";//服务器默认端口
 
+    //加载动画
+    private static LoadingAnimUtil loadingAnimUtil;
+    private static boolean loadingAnim = false;//判断是否设置加载动画
+
     private static RetrofitUtil mInstance = null;
     private static Retrofit mRetrofit = null;
     private static boolean requesting = false;//是否正在请求，保证每次只能请求一个接口
@@ -58,6 +63,7 @@ public class RetrofitUtil {
     }
 
     private RetrofitUtil(final Context context) {
+        loadingAnimUtil = new LoadingAnimUtil(context);
         //在此处设置IP和端口
         SharedPreferences preferences = context.getSharedPreferences(
                 KEY_NAME, Context.MODE_PRIVATE);
@@ -94,6 +100,17 @@ public class RetrofitUtil {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+    }
+
+    //设置加载动画
+    public static void setLoadingAnim() {
+        setLoadingAnim(null);
+    }
+
+    //设置加载动画
+    public static void setLoadingAnim(@LoadingAnimUtil.LoadingAnim String s) {
+        loadingAnim = true;
+        loadingAnimUtil.setSprite(s);
     }
 
     //GET请求
@@ -139,6 +156,14 @@ public class RetrofitUtil {
             }
             return;
         }
+        if (loadingAnim) {
+            a.getWindow().getDecorView().post(new Runnable() {
+                @Override
+                public void run() {
+                    loadingAnimUtil.loadingAnim(a.getWindow().getDecorView());
+                }
+            });
+        }
         requesting = true;
         RetrofitInterface retrofitInterface = mRetrofit.create(RetrofitInterface.class);
         Observable<ResponseBody> observable;
@@ -174,6 +199,11 @@ public class RetrofitUtil {
 
                     @Override
                     public void onNext(ResponseBody data) {
+                        if (loadingAnim) {
+                            loadingAnim = false;
+                            loadingAnimUtil.dismiss();
+                        }
+                        requesting = false;
                         try {
                             String result = data.string();
                             Log.v(TAG, "onNext " + result);
@@ -190,26 +220,32 @@ public class RetrofitUtil {
 
                     @Override
                     public void onError(Throwable e) {
+                        if (loadingAnim) {
+                            loadingAnim = false;
+                            loadingAnimUtil.dismiss();
+                        }
                         requesting = false;
                         String msg = e.toString();
                         Log.v(TAG, "onError " + msg);
                         if (!a.isDestroyed() && callback != null) {
+                            Message message = new Message();
+                            message.what = key;
                             if (msg.contains("java.net.SocketTimeoutException")) {
-                                callback.onError("请求超时");
+                                message.obj = "请求超时";
                             } else if (msg.contains("org.apache.http.conn.HttpHostConnectException")) {
-                                callback.onError("网络异常");
+                                message.obj = "网络异常";
                             } else if (msg.contains("Internal Server Error")) {
-                                callback.onError("网络异常，请重新操作");
+                                message.obj = "网络异常，请重新操作";
                             } else if (msg.contains("Not Found")) {
-                                callback.onError("服务器未启动");
+                                message.obj = "服务器未启动";
                             }
+                            callback.onError(message);
                         }
                     }
 
                     @Override
                     public void onComplete() {
                         Log.v(TAG, "onComplete");
-                        requesting = false;
                     }
                 });
     }
@@ -271,9 +307,9 @@ public class RetrofitUtil {
         /**
          * 请求失败
          *
-         * @param msg 失败信息
+         * @param message 失败信息
          */
-        void onError(String msg);
+        void onError(Message message);
 
         /**
          * 消息提示

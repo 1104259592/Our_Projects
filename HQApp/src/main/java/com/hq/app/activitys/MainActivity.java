@@ -8,22 +8,22 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hq.app.R;
 import com.hq.app.adapters.EventAdapter;
-import com.hq.app.model.entities.EventEntity;
+import com.hq.app.entities.EventEntity;
+import com.hq.app.fragments.FragMainPage;
 import com.hq.app.mylibrary.activitys.BaseActivity;
 import com.hq.app.mylibrary.utils.DialogUtil;
 import com.hq.app.mylibrary.utils.PermissionUtil;
@@ -34,45 +34,24 @@ import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
+/**
+ * 主页
+ */
+public class MainActivity extends BaseLocalActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar mToolbar;
     private FloatingActionButton mFab;
     private NavigationView mNavActivityMain;
     private DrawerLayout mDrawerLayout;
     private BottomNavigationView mBottomAppBar;
-    private RecyclerView mRecyclerView;
-    private SwipeRefreshLayout swipeRefresh;
-    private EventEntity[] eventEntities = {
-            new EventEntity("2手苹果","https://images.unsplash.com/photo-1558981001-1995369a39cd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
-            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587467440782-154ba8654ac0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
-            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587443836182-345f84c18961?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
-            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587461244603-2f5b56351de2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
-            new EventEntity("2手苹果","https://unsplash.com/photos/HjR4bD5Kq7I","降价大甩卖"),
-            new EventEntity("2手苹果","https://images.unsplash.com/photo-1587432816476-d8df44f42bb8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60","降价大甩卖"),
-    };
-
-    private List<EventEntity> entityList = new ArrayList<>();
-
-    private EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initEvents();
         initView();
         init();
     }
-
-    private void initEvents() {
-        for (int i = 0; i < 50; i++) {
-            Random random = new Random();
-            int index = random.nextInt(eventEntities.length);
-            entityList.add(0,eventEntities[index]);
-        }
-    }
-
 
     private void initView() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,13 +59,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mNavActivityMain = (NavigationView) findViewById(R.id.nav_activity_main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mBottomAppBar = (BottomNavigationView) findViewById(R.id.bottom_app_bar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.rlv_main_display);
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swip_refresh);
     }
 
     private void init() {
         setSupportActionBar(mToolbar);
-
+        setTitle("首页");
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
@@ -95,14 +72,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(mDrawerLayout, "请先登录", Snackbar.LENGTH_LONG)
-                        .setAction("登录", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = LoginActivity.startLoginActivity(MainActivity.this);
-                                baseStartIntent(intent);
-                            }
-                        }).show();
+                if (isLoging()) {
+                    showMessage("发布");
+                }
             }
         });
 
@@ -123,48 +95,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         mBottomAppBar.setOnNavigationItemSelectedListener(this);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
-        mRecyclerView.setLayoutManager(layoutManager);
-        eventAdapter = new EventAdapter(entityList);
-        mRecyclerView.setAdapter(eventAdapter);
-        eventAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Intent intent = new Intent(view.getContext(), EventDetailActivity.class);
-                intent.putExtra(EventDetailActivity.EVENT_NAME,entityList.get(position).getTitle());
-                intent.putExtra(EventDetailActivity.EVENT_IMAGE_ID,entityList.get(position).getPic());
-                startActivity(intent);
-            }
-        });
-
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshEvents();
-            }
-        });
-    }
-
-    private void refreshEvents() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initEvents();
-                        eventAdapter.notifyDataSetChanged();
-                        swipeRefresh.setRefreshing(false);
-                    }
-                });
-            }
-        }).start();
+        cutPage(new FragMainPage());
     }
 
     @Override
@@ -180,12 +111,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 showMessage("333");
                 break;
             case R.id.nav_item_04://主题设置
-                Intent intent = ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle());
-                baseStartIntentForResult(intent, REQUESTCODE);
+                baseStartIntentForResult(ThemeSettingActivity.startThemeSettingActivity(MainActivity.this, getThemeStyle()), REQUESTCODE);
                 break;
             case R.id.nav_item_positon://主题设置
-                intent = MapActivity.startMapActivity(MainActivity.this);
-                baseStartIntent(intent);
+                baseStartIntent(MapActivity.startMapActivity(MainActivity.this));
                 break;
             case R.id.nav_item2_01:
                 showMessage("555");
@@ -194,14 +123,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 showMessage("666");
                 break;
             case R.id.tab_item_01:
-                showMessage("测试权限状态");
-                DialogUtil.notifyDialog(this, "读取权限=" + PermissionUtil.BL_READ_EXTERNAL_STORAGE
-                        + "\n写入权限=" + PermissionUtil.BL_WRITE_EXTERNAL_STORAGE
-                        + "\n开启相机权限=" + PermissionUtil.BL_CAMERA);
+                FragMainPage fragMainPage = (FragMainPage)getFrag();
+                if (!fragMainPage.isVisible()) {
+                    cutPage(new FragMainPage());
+                }
                 break;
             case R.id.tab_item_02:
-                showMessage("跳转到应用权限系统设置页面");
-                PermissionUtil.gotoPermissionSettings(this);
+                showMessage("暂无功能");
                 break;
         }
         //关闭弹出菜单
@@ -220,11 +148,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            showMessage("action_settings");
-            return true;
-        } else if (id == R.id.calendar) {
-            showMessage("calendar");
+        if (id == R.id.menu_release) {
+            if (isLoging()) {
+                showMessage("发布");
+            }
             return true;
         }
 
@@ -235,5 +162,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public static Intent startMainActivity(Context c) {
         Intent intent = new Intent(c, MainActivity.class);
         return intent;
+    }
+
+    //获取当前显示的fragment
+    private Fragment getFrag() {
+        return getSupportFragmentManager().findFragmentById(R.id.main_fl);
+    }
+
+    //切换页面
+    private void cutPage(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fl, fragment).commit();
     }
 }

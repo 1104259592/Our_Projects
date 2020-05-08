@@ -1,4 +1,4 @@
-package com.hq.app.model.entities;
+package com.hq.app.entities;
 
 import com.hq.app.mylibrary.utils.ThemeUtil;
 

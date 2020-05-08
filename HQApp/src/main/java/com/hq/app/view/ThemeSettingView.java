@@ -1,6 +1,6 @@
 package com.hq.app.view;
 
-import com.hq.app.model.entities.ThemeEntity;
+import com.hq.app.entities.ThemeEntity;
 
 import java.util.List;
 

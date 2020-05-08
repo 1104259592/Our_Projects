@@ -12,10 +12,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hq.app.R;
 import com.hq.app.adapters.ThemeSettingAdapter;
-import com.hq.app.model.entities.ThemeEntity;
-import com.hq.app.presenter.ThemeSettingPresenter;
-import com.hq.app.presenter.impl.ThemeSettingPresenterImpl;
-import com.hq.app.view.ThemeSettingView;
+import com.hq.app.entities.ThemeEntity;
 import com.hq.app.mylibrary.activitys.BaseActivity;
 import com.hq.app.mylibrary.utils.ThemeUtil;
 
@@ -23,12 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 //主题设置类
-public class ThemeSettingActivity extends BaseActivity implements ThemeSettingView {
+public class ThemeSettingActivity extends BaseLocalActivity {
 
     private Toolbar mThemeSettingToolbar;
     private RecyclerView mThemeSettingRv;
     private ThemeSettingAdapter themeSettingAdapter;
-    private ThemeSettingPresenter presenter;
     private int themeStyle;//当前主题风格
 
     @Override
@@ -60,33 +56,30 @@ public class ThemeSettingActivity extends BaseActivity implements ThemeSettingVi
         });
 
         List<ThemeEntity> list = new ArrayList<>();
-        themeSettingAdapter = new ThemeSettingAdapter(list);
-        mThemeSettingRv.setAdapter(themeSettingAdapter);
+        list.add(new ThemeEntity("默认", R.color.colorPrimary, ThemeUtil.ThemeStyle.DEFAULT));
+        list.add(new ThemeEntity("蓝色", R.color.titleColor, ThemeUtil.ThemeStyle.BLUE));
+        list.add(new ThemeEntity("黑色", R.color.black, ThemeUtil.ThemeStyle.BLACK));
+
+        int position = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getThemeStyle() == ThemeUtil.getThemeStyle(this)) {
+                position = i;
+                break;
+            }
+        }
         mThemeSettingRv.setLayoutManager(new GridLayoutManager(this, 2));
+        themeSettingAdapter = new ThemeSettingAdapter(list);
+        themeSettingAdapter.setSelectIndex(position);
+        mThemeSettingRv.setAdapter(themeSettingAdapter);
+        themeSettingAdapter.openLoadAnimation();
 
         themeSettingAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                presenter.themeSelect(position);
+                themeSettingAdapter.setSelectIndex(position);
+                setThemeStyle(themeSettingAdapter.getItem(position).getThemeStyle());
             }
         });
-        presenter = new ThemeSettingPresenterImpl(this, this);
-        presenter.themeSelectData();
-    }
-
-    //所有主题数据集合回调
-    @Override
-    public void themeSelectData(List<ThemeEntity> list, int position) {
-        themeSettingAdapter.addData(list);
-        themeSettingAdapter.setSelectIndex(position);
-        themeSettingAdapter.openLoadAnimation();
-    }
-
-    //选中的主题回调
-    @Override
-    public void themeSelectResult(int position) {
-        themeSettingAdapter.setSelectIndex(position);
-        setThemeStyle(themeSettingAdapter.getItem(position).getThemeStyle());
     }
 
     @Override
