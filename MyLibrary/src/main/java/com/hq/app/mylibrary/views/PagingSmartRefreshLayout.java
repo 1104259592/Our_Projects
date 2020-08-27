@@ -80,9 +80,36 @@ public class PagingSmartRefreshLayout extends SmartRefreshLayout {
         pageUtil.setPageSize(pageSize);
     }
 
+    //获取每页数量
+    public int getPageSize() {
+        return pageUtil.getPageSize();
+    }
+
+    //获取当前页数
+    public int getPages() {
+        return pageUtil.getPages();
+    }
+
     //获取总数量
     public int getTotal() {
         return pageUtil.getTotal();
+    }
+
+    //获取总页数
+    public int getAllPage() {
+        int pageCount = 0;
+        if (getTotal() > 0) {
+            pageCount = getTotal() / getPageSize();
+            if (getTotal() % getPageSize() > 0) {
+                pageCount++;
+            }
+        }
+        return pageCount;
+    }
+
+    //设置总数量
+    public void setTotal(int total) {
+        pageUtil.setTotal(total);
     }
 
     //关闭刷新

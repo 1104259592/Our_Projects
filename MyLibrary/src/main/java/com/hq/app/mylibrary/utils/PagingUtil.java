@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class PagingUtil {
 
-    private int total;//总数量
+    private int total = -1;//总数量
     private int pageSize = 20;//每页数量
     private int pages = 1;//页数
     private boolean isFirstPage = false;//是否是第一页
@@ -20,8 +20,19 @@ public class PagingUtil {
 
     //解析数据，判断是否是最后一页并返回数据
     public <T> List<T> getList(String gsonString, Class<T> cls) {
-        List<T> list = GsonUtil.GsonToList(gsonString, cls);
-        if (list == null || list.size() == 0) {
+        List<T> list = null;
+        if (gsonString != null) {
+            list = GsonUtil.GsonToList(gsonString, cls);
+            if (total != -1) {
+                if (list == null || (total == (pages - 1) * pageSize + list.size())) {
+                    setLastPage();
+                }
+            } else {
+                if (list == null || list.size() < pageSize) {
+                    setLastPage();
+                }
+            }
+        } else {
             setLastPage();
         }
         return list;
@@ -42,6 +53,10 @@ public class PagingUtil {
         return total;
     }
 
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     //第一页
     public void firstPage() {
         pages = 1;
@@ -54,7 +69,9 @@ public class PagingUtil {
 
     //下一页
     public void nextPage() {
-        pages++;
+        if (!isLastPage) {
+            pages++;
+        }
         isFirstPage = false;
         if (callBack != null) {
             callBack.onNextPage(isLastPage);
@@ -67,8 +84,7 @@ public class PagingUtil {
     }
 
     //最后一页赋值
-    public void setLastPage() {
-        pages--;
+    private void setLastPage() {
         isLastPage = true;
     }
 
